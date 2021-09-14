@@ -21,5 +21,10 @@
             "Bachtiar\\Helper\\LaminasLogger\\": "src/laminas-logger",
             "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator"
         }
+    },
+    "source": {
+        "type": "git",
+        "url": "https://github.com/sirclo-bachtiar/magento-helpers-c1.git",
+        "reference": "get-from-commit-code"
     }
 }
