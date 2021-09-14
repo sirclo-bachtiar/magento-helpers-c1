@@ -1,0 +1,23 @@
+{
+    "name": "sirclo-bachtiar/magento-helpers-c1",
+    "description": "Magento Helper for composer v1.x.x",
+    "version": "1.0.0",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "sirclo-bachtiar",
+            "email": "tio.bachtiar@sirclo.com"
+        }
+    ],
+    "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-c1",
+    "require": {
+        "laminas/laminas-log": "^2.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bachtiar\\Helper\\LaminasLogger\\": "src/laminas-logger",
+            "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator"
+        }
+    }
+}
