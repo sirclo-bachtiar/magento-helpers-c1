@@ -1,6 +1,4 @@
-# Bachtiar Service Helpers
-
-### PS. this library is only for composer v1.x.x
+# Bachtiar Service Helpers v2
 
 ## Service Helpers.
 This service is used to help some activities during your work, which contains several functions that may make your job simpler.
@@ -11,7 +9,7 @@ This library requiring **[Laminas Log](https://github.com/laminas/laminas-log)**
 ## Installation
 
 ```bash
-composer require sirclo-bachtiar/magento-helpers-c1
+composer require sirclo-bachtiar/magento-helpers-v2
 ```
 
 ## Usage
