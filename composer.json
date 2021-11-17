@@ -1,6 +1,6 @@
 {
-    "name": "sirclo-bachtiar/magento-helpers-c1",
-    "description": "Magento Helper for composer v1.x.x",
+    "name": "sirclo-bachtiar/magento-helpers-v2",
+    "description": "Magento Helper v2",
     "version": "1.0.1",
     "type": "library",
     "license": [
@@ -12,7 +12,7 @@
             "email": "tio.bachtiar@sirclo.com"
         }
     ],
-    "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-c1",
+    "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-v2",
     "require": {
         "laminas/laminas-log": "^2.12"
     },
