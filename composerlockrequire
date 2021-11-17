@@ -1,16 +1,10 @@
 {
-    "name": "sirclo-bachtiar/magento-helpers-c1",
+    "name": "sirclo-bachtiar/magento-helpers-v2",
     "version": "1.0.1",
     "source": {
         "type": "git",
-        "url": "https://github.com/sirclo-bachtiar/magento-helpers-c1.git",
+        "url": "git@github.com:sirclo-bachtiar/magento-helpers-v2.git",
         "reference": "969395a9537beeef84e7efcbd65bc30642f34c39"
-    },
-    "dist": {
-        "type": "zip",
-        "url": "https://api.github.com/repos/sirclo-bachtiar/magento-helpers-c1/zipball/969395a9537beeef84e7efcbd65bc30642f34c39",
-        "reference": "969395a9537beeef84e7efcbd65bc30642f34c39",
-        "shasum": ""
     },
     "require": {
         "laminas/laminas-log": "^2.12"
@@ -22,7 +16,6 @@
             "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator"
         }
     },
-    "notification-url": "https://packagist.org/downloads/",
     "license": [
         "GPL-3.0"
     ],
@@ -34,9 +27,5 @@
     ],
     "description": "Magento Helper for composer v1.x.x",
     "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-c1",
-    "support": {
-        "issues": "https://github.com/sirclo-bachtiar/magento-helpers-c1/issues",
-        "source": "https://github.com/sirclo-bachtiar/magento-helpers-c1/tree/v1.0.1"
-    },
     "time": "2021-09-14T05:40:24+00:00"
 }
