@@ -1,18 +1,23 @@
 {
     "name": "sirclo-bachtiar/magento-helpers-v2",
-    "description": "Magento Helper v2",
-    "version": "1.0.1",
+    "description": "Magento Helpers v2",
     "type": "library",
-    "license": [
-        "GPL-3.0"
+    "version": "1.1.0",
+    "license": "MIT",
+    "keywords": [
+        "logger",
+        "laminas"
     ],
+    "support": {
+        "issues": "https://github.com/sirclo-bachtiar/magento-helpers-v2/issues",
+        "source": "https://github.com/sirclo-bachtiar/magento-helpers-v2"
+    },
     "authors": [
         {
             "name": "sirclo-bachtiar",
             "email": "tio.bachtiar@sirclo.com"
         }
     ],
-    "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-v2",
     "require": {
         "laminas/laminas-log": "^2.12"
     },
@@ -21,5 +26,11 @@
             "Bachtiar\\Helper\\LaminasLogger\\": "src/laminas-logger",
             "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator"
         }
-    }
+    },
+    "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-v2",
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

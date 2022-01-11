@@ -11,54 +11,38 @@ use Laminas\Log\Logger;
  * :: how to use
  * => LogService::channel('default')->mode('default')->title('log_title')->message('message_to_log');
  *
- * :: channel('default')
+ * :: channel('default') => not required
  *
- * :: mode('default')
+ * :: mode('default') => not required
  *
- * :: title('default')
+ * :: title('default') => not required
  *
- * :: message('default')
+ * :: message('default') => required
  */
 class LogService
 {
-    protected static $channel;
-    protected static $mode;
-    protected static $title;
-    protected static $message;
-
     /**
-     * Change the value of BASE_DIR on line 35,
+     * Change the value of BASE_DIR on line 30,
      * adjust to the location where your logs are stored.
      * you can use [ define() ] at [ autoload ] file,
      * default [ dirname(__DIR__) ].
      */
-    private const BASE_DIR = BP;
-    private const LOCATION = '/var/log/';
-    private const IDENTITY = 'bachtiar.';
-    private const FILEFORMAT = '.log';
+    public const BASE_DIR = BP;
+    public const LOCATION = '/var/log/';
+    public const IDENTITY = 'bachtiar.';
+    public const FILE_FORMAT = '.log';
 
     /**
-     * Logger Priority.
-     * source -> https://docs.laminas.dev/laminas-log/intro/#using-built-in-priorities
+     * convert message to json type.
+     * where message type is match.
      */
-    private const CHANNEL_EMERGENCY = 0;
-    private const CHANNEL_ALERT = 1;
-    private const CHANNEL_CRITICAL = 2;
-    private const CHANNEL_ERROR = 3;
-    private const CHANNEL_WARNING = 4;
-    private const CHANNEL_NOTICE = 5;
-    private const CHANNEL_INFO = 6;
-    private const CHANNEL_DEBUG = 7;
+    public const MESSAGE_TO_JSON_CONVERT_TYPE = ["array"];
 
-    private const FILE_DEFAULT = 'default';
-    private const FILE_TEST = 'test';
-    private const FILE_DEBUG = 'debug';
-    private const FILE_DEVELOP = 'develop';
-
-    private const DEFAULT_TITLE = 'new log';
-    private const DEFAULT_MESSAGE = 'log test successfully';
-
-    private const CHANNEL_AVAILABLE = [
+    /**
+     * channel available
+     * [emerg, alert, crit, err, warn, notice, info, debug]
+     */
+    public const CHANNEL_AVAILABLE = [
         'emerg' => self::CHANNEL_EMERGENCY,
         'alert' => self::CHANNEL_ALERT,
         'crit' => self::CHANNEL_CRITICAL,
@@ -69,12 +53,65 @@ class LogService
         'debug' => self::CHANNEL_DEBUG
     ];
 
-    private const MODE_AVAILABLE = [
+    /**
+     * mode available
+     * [test, debug, develop, default]
+     */
+    public const MODE_AVAILABLE = [
         'test' => self::FILE_TEST,
         'debug' => self::FILE_DEBUG,
         'develop' => self::FILE_DEVELOP,
         'default' => self::FILE_DEFAULT
     ];
+
+    /**
+     * Logger Priority.
+     * source -> https://docs.laminas.dev/laminas-log/intro/#using-built-in-priorities
+     */
+    public const CHANNEL_EMERGENCY = 0;
+    public const CHANNEL_ALERT = 1;
+    public const CHANNEL_CRITICAL = 2;
+    public const CHANNEL_ERROR = 3;
+    public const CHANNEL_WARNING = 4;
+    public const CHANNEL_NOTICE = 5;
+    public const CHANNEL_INFO = 6;
+    public const CHANNEL_DEBUG = 7;
+
+    private const FILE_DEFAULT = 'default';
+    private const FILE_TEST = 'test';
+    private const FILE_DEBUG = 'debug';
+    private const FILE_DEVELOP = 'develop';
+
+    private const DEFAULT_TITLE = 'new log';
+    private const DEFAULT_MESSAGE = 'log test successfully';
+
+    /**
+     * log channel
+     *
+     * @var string
+     */
+    protected static $channel;
+
+    /**
+     * log mode
+     *
+     * @var string
+     */
+    protected static $mode;
+
+    /**
+     * log title
+     *
+     * @var string
+     */
+    protected static $title;
+
+    /**
+     * log message
+     *
+     * @var mixed
+     */
+    protected static $message;
 
     // ? Public Methods
     /**
@@ -99,15 +136,17 @@ class LogService
     private static function createNewLog(): bool
     {
         $writer = new Stream(self::BASE_DIR . self::fileNameResolver());
-
         $logger = new Logger;
+        $logger->addWriter($writer);
 
         $result = false;
 
         try {
-            $logger->addWriter($writer)->log(self::channelResolver(), self::messageResolver());
+            $logger->log(self::channelResolver(), self::messageResolver());
+
+            $result = true;
         } catch (\Throwable $th) {
-            $logger->addWriter($writer)->log(self::CHANNEL_AVAILABLE['debug'], $th->getMessage());
+            $logger->log(self::CHANNEL_ERROR, $th->getMessage());
         } finally {
             return $result;
         }
@@ -125,7 +164,6 @@ class LogService
         try {
             return self::CHANNEL_AVAILABLE[$getChannel];
         } catch (\Throwable $th) {
-            self::$message .= $th->getMessage();
             return self::CHANNEL_AVAILABLE['debug'];
         }
     }
@@ -138,9 +176,13 @@ class LogService
     private static function messageResolver(): string
     {
         try {
-            $_message = json_encode(self::$message);
+            $_message = self::$message;
 
-            if (self::$title) $_message = self::$title . ": " . $_message;
+            if (in_array(gettype(self::$message), LogService::MESSAGE_TO_JSON_CONVERT_TYPE))
+                $_message = json_encode(self::$message);
+
+            if (self::$title)
+                $_message = self::$title . ": {$_message}";
 
             return $_message;
         } catch (\Throwable $th) {
@@ -160,11 +202,10 @@ class LogService
         try {
             $modeResult = self::MODE_AVAILABLE[$getMode];
         } catch (\Throwable $th) {
-            echo $th->getMessage();
             $modeResult = self::MODE_AVAILABLE['default'];
         }
 
-        return (string) self::LOCATION . self::IDENTITY . $modeResult . self::FILEFORMAT;
+        return (string) self::LOCATION . self::IDENTITY . $modeResult . self::FILE_FORMAT;
     }
 
     // ? Setter Module
