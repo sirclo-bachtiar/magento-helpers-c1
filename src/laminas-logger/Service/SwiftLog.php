@@ -2,6 +2,7 @@
 
 namespace Bachtiar\Helper\LaminasLogger\Service;
 
+use Bachtiar\Helper\LaminasLogger\Interfaces\LoggerInterface;
 use Laminas\Log\Logger;
 use Laminas\Log\Writer\Stream;
 
@@ -25,9 +26,9 @@ class SwiftLog
      * @param integer $priority [0 => "EMERG", 1 => "ALERT", 2 => "CRIT", 3 => "ERR", 4 => "WARN", 5 => "NOTICE", 6 => "INFO", 7 => "DEBUG"] default = 7 (DEBUG)
      * @return boolean
      */
-    public static function log($message, string $groupTitle = "", string $title = "", int $priority = 7): bool
+    public static function log($message, string $groupTitle = "", string $title = "", int $priority = LoggerInterface::CHANNEL_DEBUG): bool
     {
-        $writer = new Stream(LogService::BASE_DIR . self::fileNameResolver());
+        $writer = new Stream(LoggerInterface::BASE_DIR . self::fileNameResolver());
         $logger = new Logger();
         $logger->addWriter($writer);
 
@@ -40,7 +41,7 @@ class SwiftLog
                 ? self::$moduleName . " - {$groupTitle}"
                 : self::$moduleName;
 
-            if (in_array(gettype($message), LogService::MESSAGE_TO_JSON_CONVERT_TYPE))
+            if (in_array(gettype($message), LoggerInterface::MESSAGE_TO_JSON_CONVERT_TYPE))
                 $message = json_encode($message);
 
             if (iconv_strlen($title))
@@ -50,7 +51,7 @@ class SwiftLog
 
             $result = true;
         } catch (\Throwable $th) {
-            $logger->log(LogService::CHANNEL_ERROR, $th->getMessage());
+            $logger->log(LoggerInterface::CHANNEL_ERROR, $th->getMessage());
         } finally {
             return $result;
         }
@@ -80,6 +81,6 @@ class SwiftLog
      */
     private static function fileNameResolver(): string
     {
-        return LogService::LOCATION . self::LOGGER_FILE_NAME . LogService::FILE_FORMAT;
+        return LoggerInterface::LOCATION . self::LOGGER_FILE_NAME . LoggerInterface::FILE_FORMAT;
     }
 }

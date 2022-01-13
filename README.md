@@ -1,4 +1,4 @@
-# Bachtiar Service Helpers v2
+# Magento Helpers v2
 
 ## Service Helpers.
 This service is used to help some activities during your work, which contains several functions that may make your job simpler.
@@ -8,16 +8,21 @@ Personally, this library is used for magento.
 This library requiring **[Laminas Log](https://github.com/laminas/laminas-log)** for create logger.
 ## Installation
 
+#### - Set Config to composer.json (not a mandatory)
 ```bash
 composer config repositories.sirclo-bachtiar/magento-helpers-v2 git git@github.com:sirclo-bachtiar/magento-helpers-v2.git
 ```
+
+#### - Install library
 ```bash
 composer require sirclo-bachtiar/magento-helpers-v2
 ```
 
 ## Usage
 - ### Logger Service
-It's used for saving log activity.
+
+- #### LogService::class
+It's used for create log activity.
 ```bash
 use Bachtiar\Helper\LaminasLogger\Service\LogService;
 
@@ -46,6 +51,11 @@ class LogTest
     -> set log message, if null then auto set to default message.
 
 ```
+
+- #### SwiftLog::class
+  It's use for logging activity based on Icube Custom Swift Log Rule.
+  ``` bash
+  ```
 
 - ### Query Builder Service
 It's used for custom query builder. (return query only).

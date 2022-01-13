@@ -2,6 +2,7 @@
 
 namespace Bachtiar\Helper\LaminasLogger\Service;
 
+use Bachtiar\Helper\LaminasLogger\Interfaces\LoggerInterface;
 use Laminas\Log\Writer\Stream;
 use Laminas\Log\Logger;
 
@@ -21,70 +22,6 @@ use Laminas\Log\Logger;
  */
 class LogService
 {
-    /**
-     * Change the value of BASE_DIR on line 30,
-     * adjust to the location where your logs are stored.
-     * you can use [ define() ] at [ autoload ] file,
-     * default [ dirname(__DIR__) ].
-     */
-    public const BASE_DIR = BP;
-    public const LOCATION = '/var/log/';
-    public const IDENTITY = 'bachtiar.';
-    public const FILE_FORMAT = '.log';
-
-    /**
-     * convert message to json type.
-     * where message type is match.
-     */
-    public const MESSAGE_TO_JSON_CONVERT_TYPE = ["array"];
-
-    /**
-     * channel available
-     * [emerg, alert, crit, err, warn, notice, info, debug]
-     */
-    public const CHANNEL_AVAILABLE = [
-        'emerg' => self::CHANNEL_EMERGENCY,
-        'alert' => self::CHANNEL_ALERT,
-        'crit' => self::CHANNEL_CRITICAL,
-        'err' => self::CHANNEL_ERROR,
-        'warn' => self::CHANNEL_WARNING,
-        'notice' => self::CHANNEL_NOTICE,
-        'info' => self::CHANNEL_INFO,
-        'debug' => self::CHANNEL_DEBUG
-    ];
-
-    /**
-     * mode available
-     * [test, debug, develop, default]
-     */
-    public const MODE_AVAILABLE = [
-        'test' => self::FILE_TEST,
-        'debug' => self::FILE_DEBUG,
-        'develop' => self::FILE_DEVELOP,
-        'default' => self::FILE_DEFAULT
-    ];
-
-    /**
-     * Logger Priority.
-     * source -> https://docs.laminas.dev/laminas-log/intro/#using-built-in-priorities
-     */
-    public const CHANNEL_EMERGENCY = 0;
-    public const CHANNEL_ALERT = 1;
-    public const CHANNEL_CRITICAL = 2;
-    public const CHANNEL_ERROR = 3;
-    public const CHANNEL_WARNING = 4;
-    public const CHANNEL_NOTICE = 5;
-    public const CHANNEL_INFO = 6;
-    public const CHANNEL_DEBUG = 7;
-
-    private const FILE_DEFAULT = 'default';
-    private const FILE_TEST = 'test';
-    private const FILE_DEBUG = 'debug';
-    private const FILE_DEVELOP = 'develop';
-
-    private const DEFAULT_TITLE = 'new log';
-    private const DEFAULT_MESSAGE = 'log test successfully';
-
     /**
      * log channel
      *
@@ -120,7 +57,7 @@ class LogService
      * @param mixed $message
      * @return boolean
      */
-    public static function message($message = self::DEFAULT_MESSAGE): bool
+    public static function message($message = LoggerInterface::DEFAULT_MESSAGE): bool
     {
         self::$message = $message;
 
@@ -135,7 +72,7 @@ class LogService
      */
     private static function createNewLog(): bool
     {
-        $writer = new Stream(self::BASE_DIR . self::fileNameResolver());
+        $writer = new Stream(LoggerInterface::BASE_DIR . self::fileNameResolver());
         $logger = new Logger;
         $logger->addWriter($writer);
 
@@ -146,7 +83,7 @@ class LogService
 
             $result = true;
         } catch (\Throwable $th) {
-            $logger->log(self::CHANNEL_ERROR, $th->getMessage());
+            $logger->log(LoggerInterface::CHANNEL_ERROR, $th->getMessage());
         } finally {
             return $result;
         }
@@ -162,9 +99,9 @@ class LogService
         $getChannel = self::$channel ?? 'debug';
 
         try {
-            return self::CHANNEL_AVAILABLE[$getChannel];
+            return LoggerInterface::CHANNEL_AVAILABLE[$getChannel];
         } catch (\Throwable $th) {
-            return self::CHANNEL_AVAILABLE['debug'];
+            return LoggerInterface::CHANNEL_AVAILABLE['debug'];
         }
     }
 
@@ -178,7 +115,7 @@ class LogService
         try {
             $_message = self::$message;
 
-            if (in_array(gettype(self::$message), LogService::MESSAGE_TO_JSON_CONVERT_TYPE))
+            if (in_array(gettype(self::$message), LoggerInterface::MESSAGE_TO_JSON_CONVERT_TYPE))
                 $_message = json_encode(self::$message);
 
             if (self::$title)
@@ -200,12 +137,12 @@ class LogService
         $getMode = self::$mode ?? 'default';
 
         try {
-            $modeResult = self::MODE_AVAILABLE[$getMode];
+            $modeResult = LoggerInterface::MODE_AVAILABLE[$getMode];
         } catch (\Throwable $th) {
-            $modeResult = self::MODE_AVAILABLE['default'];
+            $modeResult = LoggerInterface::MODE_AVAILABLE['default'];
         }
 
-        return (string) self::LOCATION . self::IDENTITY . $modeResult . self::FILE_FORMAT;
+        return (string) LoggerInterface::LOCATION . LoggerInterface::IDENTITY . $modeResult . LoggerInterface::FILE_FORMAT;
     }
 
     // ? Setter Module
@@ -250,7 +187,7 @@ class LogService
      * @param string $title
      * @return self
      */
-    public static function title(string $title = self::DEFAULT_TITLE): self
+    public static function title(string $title = LoggerInterface::DEFAULT_TITLE): self
     {
         self::$title = $title;
 
