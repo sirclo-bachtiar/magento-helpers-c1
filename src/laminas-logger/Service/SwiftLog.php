@@ -3,12 +3,56 @@
 namespace Bachtiar\Helper\LaminasLogger\Service;
 
 use Bachtiar\Helper\LaminasLogger\Interfaces\LoggerInterface;
-use Laminas\Log\Logger;
-use Laminas\Log\Writer\Stream;
+use Bachtiar\Helper\LaminasLogger\Traits\LoggerTrait;
 
+/**
+ * Logging Activity Service
+ *
+ * :: how to use
+ * => SwiftLog::class('__CLASS__')->classLimit('default')->channel('default')->mode('default')->group('group_title')->title('log_title')->log('message_to_log');
+ *
+ * :: class('default') => not required
+ *
+ * :: classLimit('default') => not required
+ *
+ * :: channel('default') => not required
+ *
+ * :: mode('default') => not required
+ *
+ * :: group('default') => not required
+ *
+ * :: title('default') => not required
+ *
+ * :: log('default') => required
+ */
 class SwiftLog
 {
+    use LoggerTrait;
+
     public const LOGGER_FILE_NAME = "swift";
+    public const DEFAULT_MODULE_NAME = 'Swift\Logger';
+    public const DEFAULT_GROUP = 'group default';
+
+    /**
+     * current class
+     *
+     * @var string
+     */
+    public static string $class = self::DEFAULT_MODULE_NAME;
+
+    /**
+     * class namespace limit
+     *
+     * @var integer
+     */
+    public static int $classLimit = 2;
+
+    /**
+     * group of log
+     *
+     * @var string
+     */
+    public static string $group = self::DEFAULT_GROUP;
 
     /**
      * module name
@@ -17,63 +61,58 @@ class SwiftLog
      */
     public static string $moduleName = "";
 
+    public function __construct()
+    {
+        self::moduleNameResolver();
+    }
+
+    // ? Public Methods
     /**
      * custom icube swift rule for logging
      *
      * @param mixed $message set value of log here
-     * @param string $groupTitle
-     * @param string $title
-     * @param integer $priority [0 => "EMERG", 1 => "ALERT", 2 => "CRIT", 3 => "ERR", 4 => "WARN", 5 => "NOTICE", 6 => "INFO", 7 => "DEBUG"] default = 7 (DEBUG)
      * @return boolean
      */
-    public static function log($message, string $groupTitle = "", string $title = "", int $priority = LoggerInterface::CHANNEL_DEBUG): bool
+    public static function log($message = LoggerInterface::DEFAULT_MESSAGE): bool
     {
-        $writer = new Stream(LoggerInterface::BASE_DIR . self::fileNameResolver());
-        $logger = new Logger();
-        $logger->addWriter($writer);
-
         $result = false;
 
+        $logger = self::OpenStream();
+
         try {
-            self::getModuleName();
-
-            $header = iconv_strlen($groupTitle)
-                ? self::$moduleName . " - {$groupTitle}"
-                : self::$moduleName;
-
-            if (in_array(gettype($message), LoggerInterface::MESSAGE_TO_JSON_CONVERT_TYPE))
-                $message = json_encode($message);
-
-            if (iconv_strlen($title))
-                $message = "{$title}: {$message}";
-
-            $logger->log($priority, "{$header} | {$message}");
+            $logger->log(self::channelResolver(), self::message($message)->messageResolver());
 
             $result = true;
         } catch (\Throwable $th) {
-            $logger->log(LoggerInterface::CHANNEL_ERROR, $th->getMessage());
+            $logger->log(LoggerInterface::CHANNEL_ERROR_CODE, $th->getMessage());
         } finally {
             return $result;
         }
     }
 
     /**
-     * get module name
+     * module name resolver
      *
-     * @return string|null
+     * @return void
      */
-    public static function getModuleName(): ?string
+    public static function moduleNameResolver(): void
     {
-        if (!self::$moduleName) {
-            $class = __CLASS__;
-            self::$moduleName = substr($class, 0, strpos($class, '\\Helper'));
+        try {
+            $_classArray = explode("\\", self::$class);
+
+            foreach ($_classArray as $key => $class)
+                if (($key + 1) <= self::$classLimit)
+                    $_classProposed[] = $class;
+
+            self::$moduleName = implode("\\", $_classProposed);
+        } catch (\Throwable $th) {
+            self::$moduleName = self::DEFAULT_MODULE_NAME;
+        } finally {
+            self::$moduleName = str_replace('\\', '_', self::$moduleName);
         }
-
-        self::$moduleName = str_replace('\\', '_', self::$moduleName);
-
-        return self::$moduleName ?? null;
     }
 
+    // ? Private Methods
     /**
      * logger file locatio name resolver
      *
@@ -82,5 +121,74 @@ class SwiftLog
     private static function fileNameResolver(): string
     {
         return LoggerInterface::LOCATION . self::LOGGER_FILE_NAME . LoggerInterface::FILE_FORMAT;
+    }
+
+    /**
+     * resolve message input
+     *
+     * @return string
+     */
+    private static function messageResolver(): string
+    {
+        try {
+            $_message = self::$message;
+
+            $_header = iconv_strlen(self::$group)
+                ? self::$moduleName . " - " . self::$group
+                : self::$moduleName;
+
+            if (in_array(gettype($_message), LoggerInterface::MESSAGE_TO_JSON_CONVERT_TYPE))
+                $_message = json_encode($_message);
+
+            if (iconv_strlen(self::$title))
+                $_message = self::$title . ": {$_message}";
+
+            return "{$_header} | {$_message}";
+        } catch (\Throwable $th) {
+            return $th->getMessage();
+        }
+    }
+
+    // ? Setter Modules
+    /**
+     * Set current class
+     *
+     * @param string $class current class
+     *
+     * @return self
+     */
+    public static function class(string $class = self::DEFAULT_MODULE_NAME): self
+    {
+        self::$class = $class;
+
+        return new self;
+    }
+
+    /**
+     * Set class namespace limit
+     *
+     * @param integer $classLimit class namespace limit
+     *
+     * @return self
+     */
+    public static function classLimit(int $classLimit): self
+    {
+        self::$classLimit = $classLimit;
+
+        return new self;
+    }
+
+    /**
+     * Set group of log
+     *
+     * @param string $group group of log
+     *
+     * @return self
+     */
+    public static function group(string $group = self::DEFAULT_GROUP): self
+    {
+        self::$group = $group;
+
+        return new self;
     }
 }

@@ -26,14 +26,14 @@ interface LoggerInterface
      * [emerg, alert, crit, err, warn, notice, info, debug]
      */
     public const CHANNEL_AVAILABLE = [
-        'emerg' => self::CHANNEL_EMERGENCY,
-        'alert' => self::CHANNEL_ALERT,
-        'crit' => self::CHANNEL_CRITICAL,
-        'err' => self::CHANNEL_ERROR,
-        'warn' => self::CHANNEL_WARNING,
-        'notice' => self::CHANNEL_NOTICE,
-        'info' => self::CHANNEL_INFO,
-        'debug' => self::CHANNEL_DEBUG
+        self::CHANNEL_EMERGENCY_NAME => self::CHANNEL_EMERGENCY_CODE,
+        self::CHANNEL_ALERT_NAME => self::CHANNEL_ALERT_CODE,
+        self::CHANNEL_CRITICAL_NAME => self::CHANNEL_CRITICAL_CODE,
+        self::CHANNEL_ERROR_NAME => self::CHANNEL_ERROR_CODE,
+        self::CHANNEL_WARNING_NAME => self::CHANNEL_WARNING_CODE,
+        self::CHANNEL_NOTICE_NAME => self::CHANNEL_NOTICE_CODE,
+        self::CHANNEL_INFO_NAME => self::CHANNEL_INFO_CODE,
+        self::CHANNEL_DEBUG_NAME => self::CHANNEL_DEBUG_CODE
     ];
 
     /**
@@ -41,29 +41,38 @@ interface LoggerInterface
      * [test, debug, develop, default]
      */
     public const MODE_AVAILABLE = [
-        'test' => self::FILE_TEST,
-        'debug' => self::FILE_DEBUG,
-        'develop' => self::FILE_DEVELOP,
-        'default' => self::FILE_DEFAULT
+        self::MODE_DEFAULT,
+        self::MODE_TEST,
+        self::MODE_DEBUG,
+        self::MODE_DEVELOP
     ];
 
     /**
      * Logger Priority.
      * source -> https://docs.laminas.dev/laminas-log/intro/#using-built-in-priorities
      */
-    public const CHANNEL_EMERGENCY = 0;
-    public const CHANNEL_ALERT = 1;
-    public const CHANNEL_CRITICAL = 2;
-    public const CHANNEL_ERROR = 3;
-    public const CHANNEL_WARNING = 4;
-    public const CHANNEL_NOTICE = 5;
-    public const CHANNEL_INFO = 6;
-    public const CHANNEL_DEBUG = 7;
+    public const CHANNEL_EMERGENCY_CODE = 0;
+    public const CHANNEL_ALERT_CODE = 1;
+    public const CHANNEL_CRITICAL_CODE = 2;
+    public const CHANNEL_ERROR_CODE = 3;
+    public const CHANNEL_WARNING_CODE = 4;
+    public const CHANNEL_NOTICE_CODE = 5;
+    public const CHANNEL_INFO_CODE = 6;
+    public const CHANNEL_DEBUG_CODE = 7;
 
-    public const FILE_DEFAULT = 'default';
-    public const FILE_TEST = 'test';
-    public const FILE_DEBUG = 'debug';
-    public const FILE_DEVELOP = 'develop';
+    public const CHANNEL_EMERGENCY_NAME = "emerg";
+    public const CHANNEL_ALERT_NAME = "alert";
+    public const CHANNEL_CRITICAL_NAME = "crit";
+    public const CHANNEL_ERROR_NAME = "err";
+    public const CHANNEL_WARNING_NAME = "warn";
+    public const CHANNEL_NOTICE_NAME = "notice";
+    public const CHANNEL_INFO_NAME = "info";
+    public const CHANNEL_DEBUG_NAME = "debug";
+
+    public const MODE_DEFAULT = 'default';
+    public const MODE_TEST = 'test';
+    public const MODE_DEBUG = 'debug';
+    public const MODE_DEVELOP = 'develop';
 
     public const DEFAULT_TITLE = 'new log';
     public const DEFAULT_MESSAGE = 'log test successfully';

@@ -26,36 +26,73 @@ It's used for create log activity.
 ```bash
 use Bachtiar\Helper\LaminasLogger\Service\LogService;
 
-class LogTest
+class LogServiceTest
 {
     public function Log()
     {
         return LogService::channel('default')
             ->mode('default')
             ->title('log_title')
-            ->message('message_to_log');
+            ->log('message_to_log');
     }
 }
 
 #### Info ####
-:: channel('default')
+:: channel('default') => not required
     -> select channel, available [ emerg, alert, crit, err, warn, notice, info ], if null then auto set to default.
 
-:: mode('default')
+:: mode('default') => not required
     -> select log mode, available [ test, debug, develop ], if null then auto set to default.
 
-:: title('default')
+:: title('default') => not required
     -> set log title, if null then auto set to default title.
 
-:: message('default')
+:: log('default') => required
     -> set log message, if null then auto set to default message.
 
 ```
 
 - #### SwiftLog::class
-  It's use for logging activity based on Icube Custom Swift Log Rule.
-  ``` bash
-  ```
+It's use for logging activity based on Icube Custom Swift Log Rule.
+``` bash
+use Bachtiar\Helper\LaminasLogger\Service\SwiftLog;
+
+class SwiftLogTest
+{
+    public function Log()
+    {
+        return SwiftLog::channel('default')
+            ->mode('default')
+            ->class('__CLASS__')
+            ->classLimit('default')
+            ->group('group_title')
+            ->title('log_title')
+            ->log('message_to_log');
+    }
+}
+
+#### Info ####
+:: channel('default') => not required
+    -> select channel, available [ emerg, alert, crit, err, warn, notice, info ], if null then auto set to default.
+
+:: mode('default') => not required
+    -> select log mode, available [ test, debug, develop ], if null then auto set to default.
+
+:: class('default') => not required
+    -> set class name where log is use, if null then auto set to default.
+
+:: classLimit('default') => not required
+    -> set class namespace limit, if null then auto set to default.
+
+:: group('default') => not required
+    -> set group of log, if null then auto set to default.
+
+:: title('default') => not required
+    -> set log title, if null then auto set to default title.
+
+:: log('default') => required
+    -> set log message, if null then auto set to default message.
+```
 
 - ### Query Builder Service
 It's used for custom query builder. (return query only).
@@ -64,10 +101,11 @@ use Bachtiar\Helper\CustomQueryGenerator\Service\QueryBuilderService;
 
 class QueryBuilderTest
 {
-    public function QueryBuilder()
+    public function __invoke()
     {
-        return QueryBuilderService::select([])->from('base_table')
-            ->join('relation_table', 'baseColumnId', '=', 'relationColumnId')
+        return QueryBuilderService::select()
+            ->from('base_table')
+            ->join('relation_table', 'base_table.baseColumnId', '=', 'relation_table.relationColumnId')
             ->where('base_table.name', '=', 'test')
             ->andWhere('base_table.age', '=', 'age')
             ->orWhere('relation_table.address', 'like', '%ponorogo%')
@@ -76,7 +114,7 @@ class QueryBuilderTest
 }
 
 #### Info ####
-:: select([]) -> optional
+:: select() -> optional
     -> set select column, if null, then auto set to all (*).
 
 :: from('base_table') -> ! must be included

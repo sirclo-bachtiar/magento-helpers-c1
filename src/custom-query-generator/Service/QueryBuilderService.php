@@ -24,10 +24,39 @@ namespace Bachtiar\Helper\CustomQueryGenerator\Service;
  */
 class QueryBuilderService
 {
+    /**
+     * select on table
+     *
+     * @var string
+     */
     private static $select = "";
+
+    /**
+     * set base table
+     *
+     * @var string
+     */
     private static $from = "";
+
+    /**
+     * set join table
+     *
+     * @var string
+     */
     private static $join = "";
+
+    /**
+     * get where clause
+     *
+     * @var string
+     */
     private static $where = "";
+
+    /**
+     * get and where or where clause
+     *
+     * @var string
+     */
     private static $andOrWhere = "";
 
     // ? Public Methods
@@ -49,28 +78,33 @@ class QueryBuilderService
      */
     private static function buildQueryProcess(): string
     {
-        return (strlen(static::$select) ? static::$select : "SELECT * ")
-            . "FROM " . static::$from . " "
-            . static::$join
-            . static::$where
-            . static::$andOrWhere;
+        return (strlen(self::$select) ? self::$select : "SELECT * ")
+            . "FROM " . self::$from . " "
+            . self::$join
+            . self::$where
+            . self::$andOrWhere;
     }
 
     // ? Private Query Resolver
     /**
      * select query resolver
      *
-     * @param array $select
+     * @param string[] $select
      * @return string
      */
-    private static function selectResolver(array $select): string
+    private static function selectResolver($select = ''): string
     {
         $selectResult = "SELECT ";
 
+        if (!is_array($select))
+            $select = iconv_strlen($select) ? [$select] : [];
+
         if (count($select)) {
             foreach ($select as $key => $q) {
-                if ($key == 0) $selectResult .= "$q";
-                else $selectResult .= ", $q";
+                if ($key == 0)
+                    $selectResult .= "$q";
+                else
+                    $selectResult .= ", $q";
             }
         } else {
             $selectResult .= "*";
@@ -92,9 +126,9 @@ class QueryBuilderService
     {
         $joinResult = "INNER JOIN $relationTable ON ";
 
-        $joinResult .= "$baseTableId $sign $relationTable.$relationTableId ";
+        $joinResult .= "$baseTableId $sign $relationTableId";
 
-        return $joinResult;
+        return "$joinResult ";
     }
 
     /**
@@ -149,12 +183,12 @@ class QueryBuilderService
         $whereResult = " ";
 
         if (gettype($value) == "integer") {
-            $whereResult = "$column $sign $value ";
+            $whereResult = "$column $sign $value";
         } else {
-            $whereResult = "$column $sign '$value' ";
+            $whereResult = "$column $sign '$value'";
         }
 
-        return $whereResult;
+        return "$whereResult ";
     }
 
     // ? Setter Module
@@ -164,10 +198,10 @@ class QueryBuilderService
      * -> set select column,
      * if null, then auto set to all (*)
      *
-     * @param array $select
+     * @param string[] $select
      * @return self
      */
-    public static function select(array $select = []): self
+    public static function select($select = ''): self
     {
         $resolve = self::selectResolver($select);
 
