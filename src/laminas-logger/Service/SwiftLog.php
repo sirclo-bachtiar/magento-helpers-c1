@@ -9,15 +9,13 @@ use Bachtiar\Helper\LaminasLogger\Traits\LoggerTrait;
  * Logging Activity Service
  *
  * :: how to use
- * => SwiftLog::class('__CLASS__')->classLimit('default')->channel('default')->mode('default')->group('group_title')->title('log_title')->log('message_to_log');
- *
- * :: class('default') => not required
- *
- * :: classLimit('default') => not required
+ * => $this->channel('default')->mode('default')->classLimit('default')->group('group_title')->title('log_title')->log('message_to_log');
  *
  * :: channel('default') => not required
  *
  * :: mode('default') => not required
+ *
+ * :: classLimit('default') => not required
  *
  * :: group('default') => not required
  *
@@ -25,62 +23,62 @@ use Bachtiar\Helper\LaminasLogger\Traits\LoggerTrait;
  *
  * :: log('default') => required
  */
-class SwiftLog
+trait SwiftLog
 {
     use LoggerTrait;
 
-    public const LOGGER_FILE_NAME = "swift";
-    public const DEFAULT_MODULE_NAME = 'Swift\Logger';
-    public const DEFAULT_GROUP = 'group default';
+    /**
+     * logger file name
+     *
+     * @var string
+     */
+    protected static string $fileName = LoggerInterface::DEFAULT_SWIFT_LOG_FILE_NAME;
 
     /**
      * current class
      *
      * @var string
      */
-    public static string $class = self::DEFAULT_MODULE_NAME;
+    protected static string $class = __CLASS__ ?? LoggerInterface::DEFAULT_SWIFT_LOG_MODULE_NAME;
 
     /**
      * class namespace limit
      *
      * @var integer
      */
-    public static int $classLimit = 2;
+    private static int $classLimit = 2;
 
     /**
      * group of log
      *
      * @var string
      */
-    public static string $group = self::DEFAULT_GROUP;
+    private static string $group = LoggerInterface::DEFAULT_SWIFT_LOG_GROUP;
 
     /**
      * module name
      *
      * @var string
      */
-    public static string $moduleName = "";
+    private static string $moduleName = "";
 
-    public function __construct()
-    {
-        self::moduleNameResolver();
-    }
-
-    // ? Public Methods
+    // ? Private Methods
     /**
      * custom icube swift rule for logging
      *
      * @param mixed $message set value of log here
      * @return boolean
      */
-    public static function log($message = LoggerInterface::DEFAULT_MESSAGE): bool
+    private function log($message = LoggerInterface::DEFAULT_MESSAGE): bool
     {
         $result = false;
 
         $logger = self::OpenStream();
 
         try {
-            $logger->log(self::channelResolver(), self::message($message)->messageResolver());
+            self::moduleNameResolver();
+
+            $logger->log(self::channelResolver(), $this->message($message)->messageResolver());
 
             $result = true;
         } catch (\Throwable $th) {
@@ -95,7 +93,7 @@ class SwiftLog
      *
      * @return void
      */
-    public static function moduleNameResolver(): void
+    private static function moduleNameResolver(): void
     {
         try {
             $_classArray = explode("\\", self::$class);
@@ -106,13 +104,12 @@ class SwiftLog
 
             self::$moduleName = implode("\\", $_classProposed);
         } catch (\Throwable $th) {
-            self::$moduleName = self::DEFAULT_MODULE_NAME;
+            self::$moduleName = LoggerInterface::DEFAULT_SWIFT_LOG_MODULE_NAME;
         } finally {
             self::$moduleName = str_replace('\\', '_', self::$moduleName);
         }
     }
 
-    // ? Private Methods
     /**
      * logger file locatio name resolver
      *
@@ -120,7 +117,7 @@ class SwiftLog
      */
     private static function fileNameResolver(): string
     {
-        return LoggerInterface::LOCATION . self::LOGGER_FILE_NAME . LoggerInterface::FILE_FORMAT;
+        return LoggerInterface::LOCATION . self::$fileName . LoggerInterface::FILE_FORMAT;
     }
 
     /**
@@ -128,7 +125,7 @@ class SwiftLog
      *
      * @return string
      */
-    private static function messageResolver(): string
+    private function messageResolver(): string
     {
         try {
             $_message = self::$message;
@@ -151,31 +148,17 @@ class SwiftLog
 
     // ? Setter Modules
     /**
-     * Set current class
-     *
-     * @param string $class current class
-     *
-     * @return self
-     */
-    public static function class(string $class = self::DEFAULT_MODULE_NAME): self
-    {
-        self::$class = $class;
-
-        return new self;
-    }
-
-    /**
      * Set class namespace limit
      *
      * @param integer $classLimit class namespace limit
      *
      * @return self
      */
-    public static function classLimit(int $classLimit): self
+    private function classLimit(int $classLimit): self
     {
         self::$classLimit = $classLimit;
 
-        return new self;
+        return $this;
     }
 
     /**
@@ -185,10 +168,74 @@ class SwiftLog
      *
      * @return self
      */
-    public static function group(string $group = self::DEFAULT_GROUP): self
+    private function group(string $group = LoggerInterface::DEFAULT_SWIFT_LOG_GROUP): self
     {
         self::$group = $group;
 
-        return new self;
+        return $this;
+    }
+
+    /**
+     * Set value of channel.
+     *
+     * -> select channel, available [ emerg, alert, crit, err, warn, notice, info ],
+     * if null then auto set to default.
+     *
+     * @param string $channel
+     * @return self
+     */
+    private function channel(string $channel = LoggerInterface::CHANNEL_DEBUG_NAME): self
+    {
+        self::$channel = $channel;
+
+        return $this;
+    }
+
+    /**
+     * Set value of mode.
+     *
+     * -> select log mode, available [ test, debug, develop ],
+     * if null then auto set to default.
+     *
+     * @param string $mode
+     * @return self
+     */
+    private function mode(string $mode = LoggerInterface::MODE_DEFAULT): self
+    {
+        self::$mode = $mode;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of title
+     *
+     * -> set title for log,
+     * if null then there is no title for log.
+     *
+     * @param string $title
+     * @return self
+     */
+    private function title(string $title = LoggerInterface::DEFAULT_TITLE): self
+    {
+        self::$title = $title;
+
+        return $this;
+    }
+
+    /**
+     * Set log message
+     *
+     * -> set message for log,
+     * if null then will set default message for log.
+     *
+     * @param mixed $message log message
+     * @return self
+     */
+    private function message($message = LoggerInterface::DEFAULT_MESSAGE): self
+    {
+        self::$message = $message;
+
+        return $this;
     }
 }

@@ -16,6 +16,13 @@ interface LoggerInterface
     public const FILE_FORMAT = '.log';
 
     /**
+     * Icube Swift Default Constant
+     */
+    public const DEFAULT_SWIFT_LOG_FILE_NAME = "swift";
+    public const DEFAULT_SWIFT_LOG_MODULE_NAME = 'Swift\Logger';
+    public const DEFAULT_SWIFT_LOG_GROUP = 'group default';
+
+    /**
      * convert message to json type.
      * where message type is match.
      */

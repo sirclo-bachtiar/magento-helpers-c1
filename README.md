@@ -52,18 +52,19 @@ class LogServiceTest
 
 ```
 
-- #### SwiftLog::class
+- #### SwiftLog::trait
 It's use for logging activity based on Icube Custom Swift Log Rule.
 ``` bash
 use Bachtiar\Helper\LaminasLogger\Service\SwiftLog;
 
 class SwiftLogTest
 {
-    public function Log()
+    use SwiftLog;
+
+    public function __invoke()
     {
-        return SwiftLog::channel('default')
+        return $this->channel('default')
             ->mode('default')
-            ->class('__CLASS__')
             ->classLimit('default')
             ->group('group_title')
             ->title('log_title')
@@ -78,11 +79,8 @@ class SwiftLogTest
 :: mode('default') => not required
     -> select log mode, available [ test, debug, develop ], if null then auto set to default.
 
-:: class('default') => not required
-    -> set class name where log is use, if null then auto set to default.
-
 :: classLimit('default') => not required
-    -> set class namespace limit, if null then auto set to default.
+    -> set module class namespace limit, if null then auto set to default.
 
 :: group('default') => not required
     -> set group of log, if null then auto set to default.

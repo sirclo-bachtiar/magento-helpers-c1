@@ -6,11 +6,12 @@ use Bachtiar\Helper\LaminasLogger\Service\SwiftLog;
 
 class SwiftLogTest
 {
+    use SwiftLog;
+
     public function __invoke()
     {
-        return SwiftLog::channel('default')
+        return $this->channel('default')
             ->mode('default')
-            ->class('__CLASS__')
             ->classLimit(2)
             ->group('group_title')
             ->title('log_title')
