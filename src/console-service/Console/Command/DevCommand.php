@@ -4,6 +4,7 @@ namespace Bachtiar\Helper\ConsoleService\Console\Command;
 
 use Bachtiar\Helper\LaminasLogger\Service\LogService;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\App\State;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,16 +15,18 @@ class DevCommand extends Command
     //
 
     protected const INPUT_CLASS_PATH = 'class';
-    protected const INPUT_CLASS_PATH_SHORT = 'c';
+    protected const INPUT_CLASS_PATH_SHORT = 'C';
     protected const INPUT_METHOD_NAME = 'method';
-    protected const INPUT_METHOD_NAME_SHORT = 'm';
+    protected const INPUT_METHOD_NAME_SHORT = 'M';
 
     /**
      * {@inheritDoc}
      */
-    public function __construct()
-    {
+    public function __construct(
+        State $state
+    ) {
         parent::__construct();
+        $this->state = $state;
     }
 
     // ? Protected Methods
@@ -58,6 +61,8 @@ class DevCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->state->setAreaCode('global');
+
         try {
             $_objectManager = ObjectManager::getInstance();
 
@@ -67,7 +72,7 @@ class DevCommand extends Command
 
             $output->writeln('Successfully execute console command');
 
-            LogService::title(self::INPUT_CLASS_PATH . '::' . self::INPUT_METHOD_NAME)->log($_method);
+            LogService::title($input->getOption(self::INPUT_CLASS_PATH) . '::' . $input->getOption(self::INPUT_METHOD_NAME))->log($_method);
 
             return 1;
         } catch (\Throwable $th) {
