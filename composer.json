@@ -24,7 +24,8 @@
     "autoload": {
         "psr-4": {
             "Bachtiar\\Helper\\LaminasLogger\\": "src/laminas-logger",
-            "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator"
+            "Bachtiar\\Helper\\CustomQueryGenerator\\": "src/custom-query-generator",
+            "Bachtiar\\Helper\\ConsoleService\\": "src/console-service"
         }
     },
     "homepage": "https://github.com/sirclo-bachtiar/magento-helpers-v2",
